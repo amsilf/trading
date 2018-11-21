@@ -37,14 +37,78 @@ class Dividends:
 		for dividend in dividends_response:
 			self.dividends.append(SingleDividendPayment(dividend))
 
+class SingleFinancialReport:
+
+	# basic financials
+	reportDate = ''
+	grossProfit = -1
+	costOfRevenue = -1
+	costOfRevenue = -1
+	totalRevenue = -1
+	operatingIncome = -1
+	netIncome = -1
+	researchAndDevelopment = 1
+	operatingExpense = -1
+	currentAssets = -1
+	totalAssets = -1
+	totalLiabilities = -1
+	currentCash = -1
+	# current portion of long term debt
+	currentDebt = -1
+	totalCash = -1
+	totalDebt = -1
+	shareholderEquity = -1
+	cashChange = -1
+	cashFlow = -1
+	operatingGainsLosses = -1
+
+	# ratio analysis
+
+	def __init__(self, singleReport):
+		self.reportDate = singleReport['reportDate']
+		self.grossProfit = singleReport['grossProfit']
+		self.costOfRevenue = singleReport['costOfRevenue']
+		self.totalRevenue = singleReport['totalRevenue']
+		self.operatingIncome = singleReport['operatingIncome']
+		self.netIncome = singleReport['netIncome']
+		self.researchAndDevelopment = singleReport['researchAndDevelopment']
+		self.operatingExpense = singleReport['operatingExpense']
+		self.currentAssets = singleReport['currentAssets']
+		self.totalAssets = singleReport['totalAssets']
+		self.totalLiabilities = singleReport['totalLiabilities']
+		self.currentCash = singleReport['currentCash']
+		self.currentDebt = singleReport['currentDebt']
+		self.totalCash = singleReport['totalCash']
+		self.totalDebt = singleReport['totalDebt']
+		self.shareholderEquity = singleReport['shareholderEquity']
+		self.cashChange = singleReport['cashChange']
+		self.cashFlow = singleReport['cashFlow']
+		self.operatingGainsLosses = singleReport['operatingGainsLosses']
+		#self.calculateRatios()
+
+	# def calculateRatios(self):
+
+
+class Financials:
+
+	financials = []
+
+	def __init__(self, stock):
+		financials_response = stock.get_financials();
+		for financial in financials_response:
+			self.financials.append(SingleFinancialReport(financial))
 
 class Company:
 	stock = None
-	company_dividends = None
+
+	dividends = None
+	financials = None
 
 	format = 'pandas'
 
-	def __init__(self, ticker, data_format = 'pandas'):
+	def __init__(self, ticker, data_format = 'json'):
 		format = data_format
-		stock = Stock(ticker, output_format = format)
-		company_dividends = Dividends(stock)
+		self.stock = Stock(ticker, output_format = format)
+		self.dividends = Dividends(self.stock)
+		self.financials = Financials(self.stock)
+
