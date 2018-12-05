@@ -1,5 +1,6 @@
 import json
 from iexfinance import Stock
+from lib.resource_reader import ResourceReader
 
 class SingleDividendPayment:
 	exDate = ''
@@ -39,11 +40,14 @@ class Dividends:
 
 class SingleFinancialReport:
 
+	ticker = ''
+
 	# basic financials
 	reportDate = ''
 	grossProfit = -1
+	# The cost of revenue is the total cost of manufacturing and delivering a product or service
 	costOfRevenue = -1
-	costOfRevenue = -1
+	operatingRevenue = -1
 	totalRevenue = -1
 	operatingIncome = -1
 	netIncome = -1
@@ -53,6 +57,7 @@ class SingleFinancialReport:
 	totalAssets = -1
 	totalLiabilities = -1
 	currentCash = -1
+	currentLiabilities = -1
 	# current portion of long term debt
 	currentDebt = -1
 	totalCash = -1
@@ -63,11 +68,15 @@ class SingleFinancialReport:
 	operatingGainsLosses = -1
 
 	# ratio analysis
+	currentRatio = -1
+	
 
-	def __init__(self, singleReport):
+	def __init__(self, ticker, singleReport, liabilitityReader):
+		self.ticker = ticker
 		self.reportDate = singleReport['reportDate']
 		self.grossProfit = singleReport['grossProfit']
 		self.costOfRevenue = singleReport['costOfRevenue']
+		self.operatingRevenue = singleReport['operatingRevenue']
 		self.totalRevenue = singleReport['totalRevenue']
 		self.operatingIncome = singleReport['operatingIncome']
 		self.netIncome = singleReport['netIncome']
@@ -84,19 +93,32 @@ class SingleFinancialReport:
 		self.cashChange = singleReport['cashChange']
 		self.cashFlow = singleReport['cashFlow']
 		self.operatingGainsLosses = singleReport['operatingGainsLosses']
-		#self.calculateRatios()
 
-	# def calculateRatios(self):
+		self.enrichDataQuality(liabilitityReader)
 
+		self.calculateRatios()
+
+	# TODO should we pass list of financials?
+	def enrichDataQuality(self, resourceReader):
+		if self.currentLiabilities == -1:
+			 self.currentLiabilities = resourceReader.getFinancialByTicker(self.ticker, 'currentLiabilities', self.reportDate)
+
+
+	def calculateRatios(self):
+		self.currentRatio = self.currentAssets / self.currentLiabilities
+		print(self.currentRatio)
 
 class Financials:
 
 	financials = []
+	liabilitityReader = None
 
-	def __init__(self, stock):
+	def __init__(self, ticker, stock):
+		liabilitityReader = ResourceReader('./resources/liabilities.csv')
+
 		financials_response = stock.get_financials();
 		for financial in financials_response:
-			self.financials.append(SingleFinancialReport(financial))
+			self.financials.append(SingleFinancialReport(ticker, financial, liabilitityReader))
 
 class Company:
 	stock = None
@@ -110,5 +132,5 @@ class Company:
 		format = data_format
 		self.stock = Stock(ticker, output_format = format)
 		self.dividends = Dividends(self.stock)
-		self.financials = Financials(self.stock)
+		self.financials = Financials(ticker, self.stock)
 

@@ -1,0 +1,9 @@
+id,ticker,date,financial,value
+1,MSFT,2018-09-30,currentLiabilities,56277000000
+2,MSFT,2018-06-30,currentLiabilities,58488000000
+3,MSFT,2018-03-31,currentLiabilities,7623000000
+4,MSFT,2017-12-31,currentLiabilities,7850000000
+5,MSFT,2018-09-30,totalLiabilities,171652000000
+6,MSFT,2018-06-30,totalLiabilities,176130000000
+7,MSFT,2018-03-31,totalLiabilities,166258000000
+8,MSFT,2018-12-31,totalLiabilities,177643000000
