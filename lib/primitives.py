@@ -24,7 +24,6 @@ class SingleDividendPayment:
 		self.qualified = dividend_json['qualified']
 		self.indicated = dividend_json['indicated']
 
-
 # https://iextrading.com/developer/docs/#dividends
 class Dividends:
 	""" The class represents a compnay dividends and describes api resonse """
@@ -38,15 +37,40 @@ class Dividends:
 		for dividend in dividends_response:
 			self.dividends.append(SingleDividendPayment(dividend))
 
+# https://iextrading.com/developer/docs/#key-stats
+class KeyStatistics:
+	availableValues = ["companyName", "marketcap", "beta", "week52high", "week52low", "week52change",
+		"shortInterest", "shortDate", "dividendRate", "dividendYield", "exDividendDate",
+		"latestEPS", "latestEPSDate", "sharesOutstanding", "floatVal",
+		"returnOnEquity", "consensusEPS", "numberOfEstimates", "symbol", "EBITDA",
+		"revenue", "grossProfit", "cash", "debt", "ttmEPS", "revenuePerShare",
+		"revenuePerEmployee","peRatioHigh","peRatioLow","EPSSurpriseDollar","EPSSurprisePercent",
+		"returnOnAssets","returnOnCapital","profitMargin","priceToSales","priceToBook",
+		"day200MovingAvg","day50MovingAvg","institutionPercent","insiderPercent","shortRatio",
+		"year5ChangePercent","year2ChangePercent","year1ChangePercent","ytdChangePercent","month6ChangePercent",
+		"month3ChangePercent","month1ChangePercent","day5ChangePercent"]
+
+	keyStatisticsValus = {}
+
+	def getKeyStatisticsByName(self, name):
+		if name in self.keyStatisticsValus:
+			return self.keyStatisticsValus.get(name)
+		else:
+			return ""
+
+	def __init__(self, stock):
+		self.keyStatisticsValus = stock.get_key_stats()
+
+
 class SingleFinancialReport:
 
 	ticker = ''
 
-	# basic financials
+	# core financials
 	reportDate = ''
 	grossProfit = -1
 	# The cost of revenue is the total cost of manufacturing and delivering a product or service
-	costOfRevenue = -1
+	costOwevenue = -1
 	operatingRevenue = -1
 	totalRevenue = -1
 	operatingIncome = -1
@@ -67,9 +91,14 @@ class SingleFinancialReport:
 	cashFlow = -1
 	operatingGainsLosses = -1
 
+	# advanced financials
+	# https://www.investopedia.com/terms/w/wacc.asp
+	wacc = -1
+
+	freeCashFlow = -1
+
 	# ratio analysis
 	currentRatio = -1
-	
 
 	def __init__(self, ticker, singleReport, liabilitityReader):
 		self.ticker = ticker
@@ -103,10 +132,13 @@ class SingleFinancialReport:
 		if self.currentLiabilities == -1:
 			 self.currentLiabilities = resourceReader.getFinancialByTicker(self.ticker, 'currentLiabilities', self.reportDate)
 
+	# WACC - weighted average cost of capital, required by CAMP model
+	# https://www.investopedia.com/ask/answers/063014/what-formula-calculating-weighted-average-cost-capital-wacc.asp
+	def calculateWacc(self):
+		exit(0)
 
 	def calculateRatios(self):
 		self.currentRatio = self.currentAssets / self.currentLiabilities
-		print(self.currentRatio)
 
 class Financials:
 
@@ -125,6 +157,7 @@ class Company:
 
 	dividends = None
 	financials = None
+	keyStatistics = None
 
 	format = 'pandas'
 
@@ -133,4 +166,5 @@ class Company:
 		self.stock = Stock(ticker, output_format = format)
 		self.dividends = Dividends(self.stock)
 		self.financials = Financials(ticker, self.stock)
+		self.KeyStatistics = KeyStatistics(self.stock)
 
