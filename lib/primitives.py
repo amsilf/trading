@@ -91,12 +91,6 @@ class SingleFinancialReport:
 	cashFlow = -1
 	operatingGainsLosses = -1
 
-	# advanced financials
-	# https://www.investopedia.com/terms/w/wacc.asp
-	wacc = -1
-
-	freeCashFlow = -1
-
 	# ratio analysis
 	currentRatio = -1
 
@@ -132,11 +126,6 @@ class SingleFinancialReport:
 		if self.currentLiabilities == -1:
 			 self.currentLiabilities = resourceReader.getFinancialByTicker(self.ticker, 'currentLiabilities', self.reportDate)
 
-	# WACC - weighted average cost of capital, required by CAMP model
-	# https://www.investopedia.com/ask/answers/063014/what-formula-calculating-weighted-average-cost-capital-wacc.asp
-	def calculateWacc(self):
-		exit(0)
-
 	def calculateRatios(self):
 		self.currentRatio = self.currentAssets / self.currentLiabilities
 
@@ -166,5 +155,5 @@ class Company:
 		self.stock = Stock(ticker, output_format = format)
 		self.dividends = Dividends(self.stock)
 		self.financials = Financials(ticker, self.stock)
-		self.KeyStatistics = KeyStatistics(self.stock)
+		self.keyStatistics = KeyStatistics(self.stock)
 

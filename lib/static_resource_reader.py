@@ -1,19 +1,19 @@
 import pandas
 
-class ResourceReader:
+class StaticResourceReader:
 
 	resourceLocation = ''
 	headerFormat = None
 	resourceData = None
 
-	def __init__(self, resource, headerFormat=['id','ticker','date','financial','value']):
+	def __init__(self, resource, headerFormat=['id', 'type', 'date', 'value']):
 		self.resourceLocation = resource
 		self.headerFormat = headerFormat
-		
-	def getFinancialByTicker(self, ticker, financial, date):
+
+	def getFinancialByTicker(self, type, date):
 		resourceData = pandas.read_csv(self.resourceLocation)
 		for index, row in resourceData.iterrows():
-			if (row['financial'] == financial and row['date'] == date and row['ticker'] == ticker):
+			if (row['type'] == type and row['date'] == date):
 				return row['value']
 
 		return -1
